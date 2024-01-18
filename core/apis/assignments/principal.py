@@ -2,7 +2,7 @@ from flask import Blueprint
 from core import db
 from core.apis import decorators
 from core.apis.responses import APIResponse
-from core.models.assignments import Assignment
+from core.models.assignments import Assignment, AssignmentStateEnum
 
 from .schema import AssignmentSchema, AssignmentGradeSchema
 principal_assignments_resources = Blueprint('principal_assignments_resources', __name__)
@@ -12,7 +12,7 @@ principal_assignments_resources = Blueprint('principal_assignments_resources', _
 @decorators.authenticate_principal
 def list_assignments(p):
     """Returns list of assignments"""
-    all_assignments = Assignment.filter(Assignment.state == "SUBMITTED")
+    all_assignments = Assignment.filter(Assignment.state == AssignmentStateEnum.SUBMITTED)
     all_assignments_dump = AssignmentSchema().dump(all_assignments, many=True)
     return APIResponse.respond(data=all_assignments_dump)
 
@@ -23,6 +23,7 @@ def list_assignments(p):
 def grade_assignment(p, incoming_payload):
     """Grade an assignment"""
     grade_assignment_payload = AssignmentGradeSchema().load(incoming_payload)
+
 
     graded_assignment = Assignment.mark_grade(
         _id=grade_assignment_payload.id,
