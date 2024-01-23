@@ -1,0 +1,62 @@
+============================= test session starts ==============================
+platform linux -- Python 3.9.18, pytest-6.2.5, py-1.10.0, pluggy-1.0.0
+rootdir: /app, configfile: pytest.ini
+plugins: cov-2.12.1
+collected 18 items
+
+tests/principals_test.py ....                                            [ 22%]
+tests/students_test.py ......                                            [ 55%]
+tests/teachers_test.py ......                                            [ 88%]
+tests/SQL/sql_test.py F.                                                 [100%]
+
+=================================== FAILURES ===================================
+____________________ test_get_assignments_in_various_states ____________________
+
+    def test_get_assignments_in_various_states():
+        """Test to get assignments in various states"""
+    
+        # Define the expected result before any changes
+        expected_result = [('DRAFT', 2), ('GRADED', 2), ('SUBMITTED', 2)]
+    
+        # Execute the SQL query and compare the result with the expected result
+        with open('tests/SQL/number_of_assignments_per_state.sql', encoding='utf8') as fo:
+            sql = fo.read()
+    
+        sql_result = db.session.execute(text(sql)).fetchall()
+        for itr, result in enumerate(expected_result):
+            assert result[0] == sql_result[itr][0]
+>           assert result[1] == sql_result[itr][1]
+E           assert 2 == 1
+
+tests/SQL/sql_test.py:66: AssertionError
+
+---------- coverage: platform linux, python 3.9.18-final-0 -----------
+Name                                 Stmts   Miss  Cover
+--------------------------------------------------------
+core/__init__.py                        19      0   100%
+core/apis/__init__.py                    0      0   100%
+core/apis/assignments/__init__.py        3      0   100%
+core/apis/assignments/principal.py      22      0   100%
+core/apis/assignments/schema.py         36      0   100%
+core/apis/assignments/student.py        32      0   100%
+core/apis/assignments/teacher.py        22      3    86%
+core/apis/decorators.py                 32      1    97%
+core/apis/responses.py                   5      0   100%
+core/apis/teachers/__init__.py           1      0   100%
+core/apis/teachers/principal.py         13      3    77%
+core/apis/teachers/schema.py            32      3    91%
+core/libs/__init__.py                    0      0   100%
+core/libs/assertions.py                 15      2    87%
+core/libs/exceptions.py                 10      3    70%
+core/libs/helpers.py                    10      0   100%
+core/models/__init__.py                  0      0   100%
+core/models/assignments.py              77      4    95%
+core/models/students.py                 10      1    90%
+core/models/teachers.py                 14      3    79%
+core/server.py                          28      7    75%
+--------------------------------------------------------
+TOTAL                                  381     30    92%
+
+=========================== short test summary info ============================
+FAILED tests/SQL/sql_test.py::test_get_assignments_in_various_states - assert...
+========================= 1 failed, 17 passed in 0.82s =========================
